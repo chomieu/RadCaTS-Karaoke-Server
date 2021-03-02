@@ -1,23 +1,49 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react'
+import io from "socket.io-client"
+import mp3File from "./babyShark.mp3"
+
+const socket = io.connect("http://localhost:3001")
+const audio = new Audio()
 
 function App() {
+
+  const [role, setRole] = useState("")
+  const [playing, setPlaying] = useState("")
+
+  useEffect(() => {
+    function recieveMsg(m) {
+      console.log(m)
+      // if (role === "member") {
+      audio.src = m.path
+      audio.play()
+      // }
+      setPlaying(m.name)
+    }
+    socket.on("play", recieveMsg)
+
+    return () => {
+      socket.off("play", recieveMsg)
+    }
+  }, [role])
+
+  function handlePlaySound() {
+    socket.emit("play", { name: "Baby Shark", path: mp3File })
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Proof of Concept</h1>
+      <div>
+        <h4>Role</h4>
+        <button onClick={() => setRole("host")}>Host</button>
+        <button onClick={() => setRole("member")}>Member</button>
+      </div>
+      <div>
+        <button onClick={handlePlaySound}>Play</button>
+      </div>
+      <div>
+        <h4>Playing {playing}</h4>
+      </div>
     </div>
   );
 }
