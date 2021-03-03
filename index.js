@@ -3,7 +3,7 @@ const app = express()
 const server = require("http").Server(app)
 const io = require("socket.io")(server, {
   cors: {
-    origin: "http://radcats-karaoke.herokuapp.com/api/session/:id",
+    origin: "http://radcats-karaoke-app.herokuapp.com/liveSession",
     // origin: "http://radcats-karaoke-ui.herokuapp.com/api/session/:id",
     // origin: "http://localhost:3000",
     methods: ["GET", "POST"]
@@ -23,4 +23,3 @@ const PORT = process.env.PORT || 3001
 server.listen(PORT, () => {
   console.log(`http://localhost:${PORT}`)
 })
-
