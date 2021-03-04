@@ -25,6 +25,8 @@ io.on("connection", socket => {
       score: score,
       socket: socket.id
     }
+    socket.join(sessionId)
+    console.log("join", sessionId)
     console.log(username)
     if(users.filter(u => u.userId === userId).length === 0) {
       users.push(user)
