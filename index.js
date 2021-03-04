@@ -1,6 +1,12 @@
+// Express Server
 const express = require("express")
-const { emit } = require("process")
 const app = express()
+
+// CORS
+const cors = require("cors");
+app.use(cors());
+
+// Socket.io
 const server = require("http").Server(app)
 const io = require("socket.io")(server, {
   cors: {
