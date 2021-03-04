@@ -4,9 +4,8 @@ const app = express()
 const server = require("http").Server(app)
 const io = require("socket.io")(server, {
   cors: {
-    // origin: "http://radcats-karaoke-app.herokuapp.com",
-    // origin: "http://radcats-karaoke-ui.herokuapp.com/api/session/:id",
-    origin: "http://localhost:3000",
+    origin: "http://radcats-karaoke-app.herokuapp.com",
+    // origin: "http://localhost:3000",
     methods: ["GET", "POST"]
   }
 })
@@ -26,6 +25,7 @@ io.on("connection", socket => {
       pts: pts.pts,
       socket: socket.id
     }
+    console.log(user)
     socket.join(sessionId)
     console.log("join", sessionId)
     if (users.filter(u => (u.userId === userId) && (u.session === sessionId)).length === 0) {
@@ -42,8 +42,8 @@ io.on("connection", socket => {
   socket.on("points", (sessionId, userId, pts, cb) => {
     const user = users.filter(u => (u.userId === userId) && (u.session === sessionId))[0]
     user.pts = pts.pts
+    cb(users.filter(u => (u.session === sessionId)))
     const newPts = users.filter(u => (u.session === sessionId))
-    cb(newPts)
     io.to(sessionId).emit("leaderboard", newPts)
   })
 
