@@ -3,9 +3,9 @@ const app = express()
 const server = require("http").Server(app)
 const io = require("socket.io")(server, {
   cors: {
-    // origin: "http://radcats-karaoke-app.herokuapp.com/liveSession",
+    origin: "http://radcats-karaoke-app.herokuapp.com",
     // origin: "http://radcats-karaoke-ui.herokuapp.com/api/session/:id",
-    origin: "http://localhost:3000",
+    // origin: "http://localhost:3000",
     methods: ["GET", "POST"]
   }
 })
@@ -16,16 +16,20 @@ let users = []
 io.on("connection", socket => {
   console.log("connected")
 
-  socket.on("joinSession", (sessionId, userId, cb) => {
+  socket.on("joinSession", (sessionId, userId, username, pfp, score, cb) => {
     const user = {
-      sessionId: sessionId,
+      session: sessionId,
       userId: userId,
-      socketId: socket.id
+      username: username,
+      pfp: pfp,
+      score: score,
+      socket: socket.id
     }
-    console.log("join", sessionId)
-    socket.join(sessionId)
-    users.push(user)
-    cb(users)
+    console.log(username)
+    if(users.filter(u => u.userId === userId).length === 0) {
+      users.push(user)
+    }
+    cb(users.filter(u => u.session === sessionId))
   })
 
   socket.on("start", (sessionId, playMsg) => {
