@@ -1,4 +1,5 @@
 const express = require("express")
+const { emit } = require("process")
 const app = express()
 const server = require("http").Server(app)
 const io = require("socket.io")(server, {
@@ -16,27 +17,34 @@ let users = []
 io.on("connection", socket => {
   console.log("connected")
 
-  socket.on("joinSession", (sessionId, userId, username, pfp, score, cb) => {
+  socket.on("joinSession", (sessionId, userId, username, pfp, pts, cb) => {
     const user = {
       session: sessionId,
       userId: userId,
       username: username,
       pfp: pfp,
-      score: score,
+      pts: pts.pts,
       socket: socket.id
     }
     socket.join(sessionId)
     console.log("join", sessionId)
-    console.log(username)
-    if(users.filter(u => u.userId === userId).length === 0) {
+    if (users.filter(u => (u.userId === userId) && (u.session === sessionId)).length === 0) {
       users.push(user)
     }
-    cb(users.filter(u => u.session === sessionId))
+    cb(users.filter(u => (u.session === sessionId)))
   })
 
-  socket.on("start", (sessionId, playMsg) => {
-    console.log("start", sessionId)
+  socket.on("play", (sessionId, playMsg) => {
+    console.log("play", sessionId)
     io.to(sessionId).emit("play", playMsg)
+  })
+
+  socket.on("points", (sessionId, userId, pts, cb) => {
+    const user = users.filter(u => (u.userId === userId) && (u.session === sessionId))[0]
+    user.pts = pts.pts
+    const newPts = users.filter(u => (u.session === sessionId))
+    cb(newPts)
+    io.to(sessionId).emit("leaderboard", newPts)
   })
 
   socket.on("disconnect", () => {
