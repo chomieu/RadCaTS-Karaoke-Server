@@ -10,7 +10,8 @@ app.use(cors());
 const server = require("http").Server(app)
 const io = require("socket.io")(server, {
   cors: {
-    origin: "https://radcats-karaoke.herokuapp.com",
+    origin: "https://radcatskaraoke.herokuapp.com/", // radcats heroku deployment
+    // origin: "https://radcats-karaoke.herokuapp.com", 
     // origin: "http://localhost:3000",
     methods: ["GET", "POST"]
   }
