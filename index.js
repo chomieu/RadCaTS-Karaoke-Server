@@ -5,7 +5,6 @@ const server = require("http").Server(app)
 const io = require("socket.io")(server, {
   cors: {
     origin: "https://radcatskaraoke.herokuapp.com/",
-    // origin: "http://radcats-karaoke-ui.herokuapp.com/api/session/:id",
     // origin: "http://localhost:3000",
     methods: ["GET", "POST"]
   }
